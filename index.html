@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Анимированное сердечко</title>
+  <style>
+    /* Контейнер для частиц (particles.js) */
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    /* Анимированный градиентный фон */
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(-45deg, #ffcccb, #ffd1dc, #ffe7e0, #ffcccb);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+    }
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .message {
+      font-size: 24px;
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeIn 2s ease-in-out forwards;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 2s ease-in-out;
+      position: relative;
+      z-index: 2;
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    /* Стиль для фиксированного "сердца" с эффектом биения */
+    .heart {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      background-color: red;
+      transform: rotate(-45deg);
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      margin-top: 55px;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+    }
+    .heart::before, .heart::after {
+      content: '';
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background-color: red;
+      border-radius: 50%;
+    }
+    .heart::before { top: -50px; left: 0; }
+    .heart::after  { left: 50px; top: 0; }
+    @keyframes heartbeat {
+      0% { transform: scale(1) rotate(-45deg); }
+      50% { transform: scale(1.2) rotate(-45deg); }
+      100% { transform: scale(1) rotate(-45deg); }
+    }
+    /* Плавающие элементы (сердца или медвежата) */
+    @keyframes floatingHearts {
+      from { transform: translateY(100vh) scale(0.5); opacity: 1; }
+      to { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
+    .floating-heart {
+      position: absolute;
+      font-size: 20px;
+      animation: floatingHearts 5s linear infinite;
+      z-index: 1;
+    }
+    /* Стили для цитаты */
+    #quote {
+      margin-top: 15px;
+      font-size: 20px;
+      font-style: italic;
+      color: #ff3366;
+      display: none;
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <!-- Контейнер для частиц (particles.js) -->
+  <div id="particles-js"></div>
+  
+  <div class="card">
+    <h1>С Днём святого Валентина! <span class="heart">💖</span></h1>
+    <!-- Основной текст с обработчиком клика -->
+    <p id="main-text">Пусть этот день будет полон любви, радости и теплоты.</p>
+    <!-- Цитата, которая появится при клике -->
+    <p id="quote">"Любовь – свет, который озаряет тьму даже в самые пасмурные дни."</p>
+  </div>
+  
+  <!-- Фиксированное сердце с биением -->
+  <div class="heart" id="heart"></div>
+  
+  <audio id="bg-music" loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+  </audio>
+  
+  <!-- Подключаем particles.js (CDN) -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  
+  <script>
+    // Анимация постоянного сердца.
+    setTimeout(() => {
+      const heart = document.getElementById('heart');
+      heart.style.opacity = '1';
+      heart.style.animation = 'heartbeat 1s infinite';
+    }, 500);
+    
+    // Функция для создания плавающих элементов (случайно ❤️ или 🧸)
+    function createFloatingElement() {
+      const el = document.createElement('div');
+      el.classList.add('floating-heart');
+      el.innerHTML = Math.random() < 0.5 ? '❤️' : '🧸';
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.animationDuration = (Math.random() * 3 + 3) + 's';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 5000);
+    }
+    setInterval(createFloatingElement, 500);
+    
+    // Воспроизведение фоновой музыки.
+    window.onload = () => {
+      setTimeout(() => {
+        document.getElementById('bg-music').play();
+      }, 500);
+    };
+    
+    // particles.js конфигурация.
+    particlesJS("particles-js", {
+      "particles": {
+        "number": {
+          "value": 50,
+          "density": { "enable": true, "value_area": 800 }
+        },
+        "color": { "value": "#ff66cc" },
+        "shape": { "type": "circle" },
+        "opacity": {
+          "value": 0.5,
+          "random": true
+        },
+        "size": {
+          "value": 5,
+          "random": true
+        },
+        "move": {
+          "enable": true,
+          "speed": 2,
+          "direction": "top",
+          "random": true,
+          "straight": false,
+          "out_mode": "out"
+        }
+      },
+      "interactivity": {
+        "events": {
+          "onhover": { "enable": false },
+          "onclick": { "enable": false }
+        }
+      },
+      "retina_detect": true
+    });
+    
+    // Parallax-эффект с использованием deviceorientation.
+    window.addEventListener('deviceorientation', function(event) {
+      const gamma = event.gamma || 0; // наклон влево/вправо
+      const beta = event.beta || 0;   // наклон вперед/назад
+      const card = document.querySelector('.card');
+      if (card) {
+        // Небольшое смещение: делим на 10 для мягкого эффекта.
+        card.style.transform = `translate(${gamma/10}px, ${beta/10}px)`;
+      }
+    });
+    
+    // Динамическое изменение градиентного фона при смене ориентации.
+    window.addEventListener('orientationchange', () => {
+      const angle = Math.floor(Math.random() * 360);
+      document.body.style.background = `linear-gradient(${angle}deg, #ffcccb, #ffd1dc, #ffe7e0, #ffcccb)`;
+    });
+    
+    // Интерактивный touch-эффект: пульсирующий круг при касании.
+    document.body.addEventListener('touchstart', function(e) {
+      const touch = e.touches[0];
+      const ripple = document.createElement('div');
+      ripple.style.position = 'absolute';
+      ripple.style.background = 'rgba(255, 0, 0, 0.5)';
+      ripple.style.borderRadius = '50%';
+      ripple.style.width = '20px';
+      ripple.style.height = '20px';
+      ripple.style.left = (touch.clientX - 10) + 'px';
+      ripple.style.top = (touch.clientY - 10) + 'px';
+      ripple.style.transform = 'scale(0)';
+      ripple.style.transition = 'transform 0.5s, opacity 0.5s';
+      ripple.style.zIndex = 3;
+      document.body.appendChild(ripple);
+      setTimeout(() => {
+        ripple.style.transform = 'scale(5)';
+        ripple.style.opacity = '0';
+      }, 0);
+      setTimeout(() => ripple.remove(), 500);
+    });
+    
+    
+    document.body.addEventListener('click', function(e) {
+      const ripple = document.createElement('div');
+      ripple.style.position = 'absolute';
+      ripple.style.background = 'rgba(255, 0, 0, 0.5)';
+      ripple.style.borderRadius = '50%';
+      ripple.style.width = '20px';
+      ripple.style.height = '20px';
+      ripple.style.left = (e.clientX - 10) + 'px';
+      ripple.style.top = (e.clientY - 10) + 'px';
+      ripple.style.transform = 'scale(0)';
+      ripple.style.transition = 'transform 0.5s, opacity 0.5s';
+      ripple.style.zIndex = 3;
+      document.body.appendChild(ripple);
+      setTimeout(() => {
+        ripple.style.transform = 'scale(5)';
+        ripple.style.opacity = '0';
+      }, 0);
+      setTimeout(() => ripple.remove(), 500);
+    });
+    
+    // Обработчик для клика по основному тексту - показать цитату.
+    const mainText = document.getElementById('main-text');
+    const quote = document.getElementById('quote');
+    mainText.addEventListener('click', function() {
+      quote.style.display = 'block';
+      
+      setTimeout(() => quote.style.opacity = '1', 10);
+    });
+  </script>
+</body>
+</html> 
